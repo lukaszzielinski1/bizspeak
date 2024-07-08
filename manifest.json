@@ -1,0 +1,15 @@
+{
+    "lang": "PL",
+    "dir":"ltr",
+    "name":"BizSpeak",
+    "description": "Learn Business English - Like a Boss!",
+    "icons":[{
+        "src":"imgs/icon.png",
+        "sizes":"512x512",
+        "type":"image/png"
+    }],
+    "scope":"/",
+    "start_url":"/index.html",
+    "display": "minimal-ui",
+    "orientation": "portrait-primary"
+}

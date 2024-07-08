@@ -1,0 +1,105 @@
+.navbar-brand {
+    display: flex;
+    align-items: center; /* Wyśrodkowanie ikony w pionie */
+    padding-left: 10px; /* Dodaj odstęp po lewej stronie */
+}
+
+.navbar-brand img {
+    margin-right: 10px; /* Dodaj odstęp po prawej stronie ikony */
+}
+
+.navbar_msg{
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto;
+    color: #FFFFFF;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+    height: 52px;
+}
+
+.main-cont{
+    display: flex;
+    justify-content: center;
+    padding-top: 10vh;
+}
+
+.logo_container{
+    margin-bottom: 30px;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+.logo{
+
+    max-width: 400px;
+}
+
+.logo_container2{
+    margin-bottom: 30px;
+    width: 100%;
+    text-align: center;
+    
+}
+
+.logo2{
+    max-width: 250px;
+}
+
+.page_msg{
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    font-size: 24;
+    margin: 0 auto;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: block;
+    width: fit-content;
+    padding: 10px;
+}
+
+.btn-custom {
+    font-family: 'Lato', sans-serif !important;
+    font-weight: bold;
+    background-color: #000000 !important;
+    color: white !important;
+}
+
+::placeholder {
+    color: #b0acac !important
+}
+
+.logo_container_nav{
+    margin-bottom: 30px;
+    width: 100%;
+    text-align: center;
+    
+}
+
+.logo_nav{
+    max-width: 150px;
+}
+
+body{
+    background-color:#DDE0E4 !important;
+    /* #DDE0E4 
+       #b0acac  */
+}
+
+
+.btn-custom-game {
+    font-family: 'Lato', sans-serif !important;
+    background-color: #908c8c !important;
+    color: white !important;
+    border-color:#908c8c !important;
+    font-weight: bold;
+}
