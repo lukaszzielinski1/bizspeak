@@ -26,6 +26,7 @@ const appInstance = createApp({
             pass_: '',
             message: '',
             phrases: [],
+            meanings: [],
             currentPhrase: {},
             options: [],
             currentPhraseIndex: 0,
@@ -35,7 +36,12 @@ const appInstance = createApp({
             gameStarted: false,
             gameStartGame: true,
             highScore: 0,
-            user: null
+            user: null,
+            selectedOption: null,
+            correctOption: null,
+            showNextButton: false,
+            example: '',
+            example_pl: ''
         };
     },
     methods: {
@@ -48,8 +54,14 @@ const appInstance = createApp({
         async toEng() {
             location.replace("/engtopol.html");
         },
+        async toPol(){
+            location.replace("/poltoeng.html");
+        },
         async toMenu() {
             location.replace("/menu.html");
+        },
+        async toLearn() {
+            location.replace("/learn.html");
         },
         async logOut() {
             signOut(auth).then(() => {
@@ -94,7 +106,7 @@ const appInstance = createApp({
                         await setDoc(doc(db, "users", userCredential.user.uid), {
                             username: this.uname_,
                             email: this.mail_,
-                            highScore: 0 // Initialize high score to 0
+                            highScore: 0,
                         }).then(() => {
                             console.log("User has successfully signed up");
                         });
@@ -110,9 +122,10 @@ const appInstance = createApp({
         async fetchPhrases() {
             const phrasesSnapshot = await getDocs(collection(db, 'phrases_data'));
             this.phrases = phrasesSnapshot.docs.map(doc => doc.data());
-            this.totalPhrases = this.phrases.length; // Ustawienie całkowitej liczby fraz
-            
+            this.meanings = this.phrases.map(phrase => phrase.meaning);
+            this.totalPhrases = this.phrases.length;
         },
+
         startGame() {
             this.score = 0;
             this.gameOver = false;
@@ -127,14 +140,16 @@ const appInstance = createApp({
                 this.endGame();
                 return;
             }
-            
+
             const randomIndex = Math.floor(Math.random() * this.phrases.length);
             this.currentPhrase = this.phrases.splice(randomIndex, 1)[0];
             this.currentPhraseIndex++;
-            
+            this.example = this.currentPhrase.example;
+            this.example_pl = this.currentPhrase.example_pl;
+
             console.log(`Current phrase index: ${this.currentPhraseIndex}`);
             console.log('Current phrase:', this.currentPhrase);
-            
+
             this.generateOptions();
         },
         generateOptions() {
@@ -144,11 +159,12 @@ const appInstance = createApp({
             }
     
             const options = [this.currentPhrase.meaning];
-            const phrasesLength = this.phrases.length;
+            let availableMeanings = [...this.meanings];
+            availableMeanings = availableMeanings.filter(meaning => meaning !== this.currentPhrase.meaning);
             
-            // Handle edge case when there are fewer than 4 unique meanings left
             while (options.length < 4) {
-                const randomOption = this.phrases[Math.floor(Math.random() * phrasesLength)].meaning;
+                const randomIndex = Math.floor(Math.random() * availableMeanings.length);
+                const randomOption = availableMeanings.splice(randomIndex, 1)[0];
                 options.push(randomOption);
             }
             this.options = options.sort(() => Math.random() - 0.5);
@@ -157,9 +173,18 @@ const appInstance = createApp({
         },
         checkAnswer(selectedOption) {
             console.log('Checking answer...');
+            this.selectedOption = selectedOption;
+            this.correctOption = this.currentPhrase.meaning;
+            this.showNextButton = true;
+
             if (selectedOption === this.currentPhrase.meaning) {
                 this.score++;
             }
+        },
+        nextQuestion() {
+            this.selectedOption = null;
+            this.correctOption = null;
+            this.showNextButton = false;
             if (this.phrases.length > 0) {
                 this.nextPhrase();
             } else {
@@ -177,7 +202,7 @@ const appInstance = createApp({
             this.gameStarted = false;
             this.gameStartGame = true;
             this.currentPhraseIndex = 0;
-            await this.fetchPhrases(); // Ponownie wczytaj frazy
+            await this.fetchPhrases();
         },
         async updateHighScore() {
             const user = auth.currentUser;
@@ -194,7 +219,7 @@ const appInstance = createApp({
                     }
                 }
             }
-        },
+        },      
         async loadHighScore() {
             const user = auth.currentUser;
             if (user) {
@@ -217,7 +242,7 @@ const appInstance = createApp({
                 }
             } else {
                 this.user = null;
-                this.uname_ = ''; // Wyczyść nazwę użytkownika, jeśli użytkownik nie jest zalogowany
+                this.uname_ = '';
             }
         });
         await this.fetchPhrases();

@@ -18,6 +18,9 @@
               <span class="page_msg" style="font-size: 16;">Welcome, {{ uname_ }}</span>
             </a>
             <div v-if="gameStartGame || gameOver" class="navbar_msg"><img src="imgs/logo2.png" class="logo_nav"></div>
+            <div v-if="gameStartGame" class="ms-auto navbar-brand">
+                <button class="btn btn-light text-dark" style="margin-right: 5px !important" @click.prevent="toModes()">Go back</button>
+              </div>
             <span v-if="gameStarted" class="navbar_msg">{{ currentPhraseIndex }}/{{ totalPhrases }}</span>
             <div v-if="gameStarted" class="ms-auto navbar-brand">
                 <span class="page_msg" style="font-size: 16; margin-right: 5px !important">Your High Score: {{ highScore }}</span>
@@ -29,27 +32,45 @@
               <div class="login_containter mb-4">
                 <!-- game start game-->
                 <div v-if="gameStartGame">
-                    <span class="page_msg" style="font-size: 32">Your High Score: {{ highScore }}</span>
+                    <span class="page_msg" style="font-size: 32; font-weight: 800 !important;">Your High Score: {{ highScore }}</span>
                     <div class="row justify-content-center align-items-center" style="height: 75%;">
                         <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                             <div class="d-grid gap-2">
                                 <button @click="startGame" class="btn btn-primary btn-lg btn-custom mb-5 h-75" style="font-size: 24;">Start Game</button>
-                                </div>
-                                </div>
-                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- game started -->
                 <div v-if="gameStarted">
                     <div style="height:170px">
-                        <span class="page_msg" style="font-size: 48">{{ currentPhrase.phrase }}</span>
+                        <span class="page_msg" style="font-size: 48; font-weight: 800 !important;">{{ currentPhrase.phrase }}</span>
+                        <div v-if="showNextButton" class="page_msg">
+                            <span class="page_msg" style="font-size: 16; font-weight: 700 !important;">{{ example }}</span>
+                            <span class="page_msg" style="font-size: 16; color:#000000; opacity: 45%; font-weight: 700 !important;">{{ example_pl }}</span>
+                        </div>
                     </div>
                     
                     <div class="container text-center mt-50" style="padding-top:50">
                         <div class="row row-cols-2 mb-5 w-75 mx-auto">
                             <div class="col" style="margin-top:10px; margin-bottom:10px" v-for="(option, index) in options" :key="index">
-                                <button style="max-width: 210; min-height: 126; max-height: 126;" class="btn btn-primary btn-lg btn-custom mb-5 h-100 w-100" @click="checkAnswer(option)">{{ option }}</button>
+                                <button 
+                                    :class="[
+                                        (option === correctOption ? 'btn-correct' : 
+                                        (option === selectedOption && option !== correctOption ? 'btn-incorrect' : 'btn-default'))
+                                    ]"
+                                    style="max-width: 210px; min-height: 126px; max-height: 126px;"
+                                    class="btn btn-lg btn-custom mb-5 h-100 w-100"
+                                    @click="checkAnswer(option)"
+                                    :disabled="selectedOption !== null">
+                                    {{ option }}
+                                </button>
                             </div>
+                        </div>
+                        <div v-if="showNextButton" class="text-center">
+                            <button type="button" class="btn btn-primary btn-lg btn-custom mb-5" style="margin-right: 10; font-family: 'Lato', sans-serif; font-weight: 700 !important; background-color: #504c54 !important; border-color: #504c54 !important" @click="nextQuestion">Next</button>
+                            <button type="button" class="btn btn-primary btn-lg btn-custom mb-5" style="margin-left: 10; font-family: 'Lato', sans-serif; font-weight: 700 !important; background-color: #504c54 !important; border-color: #504c54 !important" @click="toMenu">Back</button>
                         </div>
                     </div>
                 </div>
