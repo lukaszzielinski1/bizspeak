@@ -27,8 +27,8 @@
       <div class="col-xxl-6 col-xl-8 col-lg-10 col-md-8 col-sm-10 col-10">
         <div class="row justify-content-center align-items-center" style="height: 75%;">
             <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                <div class="d-grid gap-2" v-for="(phrase, index) in phrases.slice(0, 50)">
-                    <button @click.prevent="learn(selectedOption)" type="button" class="btn btn-primary btn-lg btn-custom mb-5 h-75" style="font-size: 24; font-family: 'Lato', sans-serif; font-weight: 700 !important;">{{ phrase.phrase }}</button>
+                <div class="d-grid gap-2" v-for="(phrase, index) in phrases" :key="index">
+                    <button @click.prevent="" type="button" class="btn btn-primary btn-lg btn-custom mb-5 h-75" style="font-size: 24; font-family: 'Lato', sans-serif; font-weight: 700 !important;">{{ phrase.phrase }}</button>
                 </div>
             </div>
         </div>

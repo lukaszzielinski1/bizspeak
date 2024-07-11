@@ -28,6 +28,7 @@ const appInstance = createApp({
             phrases: [],
             meanings: [],
             currentPhrase: {},
+            currentMeaning: {},
             options: [],
             currentPhraseIndex: 0,
             totalPhrases: 0,
@@ -36,6 +37,7 @@ const appInstance = createApp({
             gameStarted: false,
             gameStartGame: true,
             highScore: 0,
+            highScore2: 0,
             user: null,
             selectedOption: null,
             correctOption: null,
@@ -45,6 +47,8 @@ const appInstance = createApp({
         };
     },
     methods: {
+
+        //location replacing
         async toLogIn() {
             location.replace("/signin.html");
         },
@@ -63,6 +67,11 @@ const appInstance = createApp({
         async toLearn() {
             location.replace("/learn.html");
         },
+        async toModes() {
+            location.replace("/modes.html");
+        },
+
+        //login/logout/signin
         async logOut() {
             signOut(auth).then(() => {
                 location.replace("/index.html");
@@ -70,10 +79,7 @@ const appInstance = createApp({
             }).catch((error) => {
                 alert("An error occurred:\n" + error);
             });
-        },
-        async toModes() {
-            location.replace("/modes.html");
-        },
+        }, 
         async logIn() {
             this.mail_ = this.$refs.mail.value;
             this.pass_ = this.$refs.pass.value;
@@ -107,6 +113,7 @@ const appInstance = createApp({
                             username: this.uname_,
                             email: this.mail_,
                             highScore: 0,
+                            highScore2: 0,
                         }).then(() => {
                             console.log("User has successfully signed up");
                         });
@@ -119,19 +126,14 @@ const appInstance = createApp({
                     });
             }
         },
+
+        //engtopol
         async fetchPhrases() {
             const phrasesSnapshot = await getDocs(collection(db, 'phrases_data'));
             this.phrases = phrasesSnapshot.docs.map(doc => doc.data());
             this.meanings = this.phrases.map(phrase => phrase.meaning);
+            this.phrasesOnly = this.phrases.map(phrase => phrase.phrase);
             this.totalPhrases = this.phrases.length;
-        },
-
-        startGame() {
-            this.score = 0;
-            this.gameOver = false;
-            this.gameStarted = true;
-            this.gameStartGame = false;
-            this.nextPhrase();
         },
         nextPhrase() {
             console.log('Getting next phrase...');
@@ -192,6 +194,77 @@ const appInstance = createApp({
                 this.endGame();
             }
         },
+
+        //poltoeng
+        nextMeaning() {
+            console.log('Getting next meaning...');
+            if (this.phrases.length === 0) {
+                console.log('No more meanings available. Ending game.');
+                this.endGame2();
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * this.phrases.length);
+            this.currentMeaning = this.phrases.splice(randomIndex, 1)[0];
+            this.currentPhraseIndex++;
+            this.example = this.currentMeaning.example;
+            this.example_pl = this.currentMeaning.example_pl;
+
+            console.log(`Current phrase index: ${this.currentPhraseIndex}`);
+            console.log('Current phrase:', this.currentMeaning);
+
+            this.generateOptions2();
+        },
+        generateOptions2() {
+            if (!this.currentMeaning) {
+                console.error('Current phrase is undefined or null');
+                return;
+            }
+    
+            const options = [this.currentMeaning.phrase];
+            let availablePhrases = [...this.phrasesOnly];
+            availablePhrases = availablePhrases.filter(phrase => phrase !== this.currentMeaning.phrase);
+            
+            while (options.length < 4) {
+                const randomIndex = Math.floor(Math.random() * availablePhrases.length);
+                const randomOption = availablePhrases.splice(randomIndex, 1)[0];
+                options.push(randomOption);
+            }
+            this.options = options.sort(() => Math.random() - 0.5);
+            
+            console.log('Generated options:', this.options);
+        },
+        checkAnswer2(selectedOption) {
+            console.log('Checking answer...');
+            this.selectedOption = selectedOption;
+            this.correctOption = this.currentMeaning.phrase;
+            this.showNextButton = true;
+
+            if (selectedOption === this.currentMeaning.phrase) {
+                this.score++;
+            }
+        },
+        nextQuestion2() {
+            this.selectedOption = null;
+            this.correctOption = null;
+            this.showNextButton = false;
+            if (this.phrases.length > 0) {
+                this.nextMeaning();
+            } else {
+                console.log('All phrases answered. Ending game.');
+                this.endGame2();
+            }
+        },
+
+
+        //game starting
+        startGame() {
+            this.score = 0;
+            this.gameOver = false;
+            this.gameStarted = true;
+            this.gameStartGame = false;
+            this.nextPhrase();
+        },
         endGame() {
             this.gameOver = true;
             this.gameStarted = false;
@@ -204,6 +277,29 @@ const appInstance = createApp({
             this.currentPhraseIndex = 0;
             await this.fetchPhrases();
         },
+
+        //game starting pol
+        startGame2() {
+            this.score = 0;
+            this.gameOver = false;
+            this.gameStarted = true;
+            this.gameStartGame = false;
+            this.nextMeaning();
+        },
+        endGame2() {
+            this.gameOver = true;
+            this.gameStarted = false;
+            this.updateHighScore2();
+        },
+        async startOver(){
+            this.gameOver=false;
+            this.gameStarted = false;
+            this.gameStartGame = true;
+            this.currentPhraseIndex = 0;
+            await this.fetchPhrases();
+        },
+
+        //high score eng
         async updateHighScore() {
             const user = auth.currentUser;
             if (user) {
@@ -228,8 +324,39 @@ const appInstance = createApp({
                     this.highScore = userDoc.data().highScore;
                 }
             }
+        },
+        //high score pol
+    async updateHighScore2() {
+        const user = auth.currentUser;
+        if (user) {
+            const userDocRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (this.score > userData.highScore2) {
+                    await setDoc(userDocRef, {
+                        highScore2: this.score
+                    }, { merge: true });
+                    this.highScore2 = this.score;
+                }
+            }
         }
     },
+        async loadHighScore2() {
+            const user = auth.currentUser;
+            if (user) {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    this.highScore2 = userDoc.data().highScore2;
+                }
+            }
+        },
+    },
+
+          
+    
+
+    //mounted
     async mounted() {
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -239,6 +366,7 @@ const appInstance = createApp({
                     this.uname_ = userDoc.data().username;
                     this.user = user;
                     this.loadHighScore();
+                    this.loadHighScore2();
                 }
             } else {
                 this.user = null;
