@@ -12,28 +12,46 @@
   </head>
   <body>
     <div id="app">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand">
-        <img src="imgs/icon.png" width="36px" height="36px" alt="">
-        <span class="page_msg" style="font-size: 16;">Welcome, {{ uname_ }}</span>
-      </a>
-      <span class="navbar_msg">Choose phrase</span>
-      <div class="ms-auto navbar-brand">
-        <button class="btn btn-light text-dark" style="margin-right: 5px !important" @click.prevent="toMenu()">Back to menu</button>
-      </div>
-    </nav>
-    <main class="main-cont h-100">
-      <div class="col-xxl-6 col-xl-8 col-lg-10 col-md-8 col-sm-10 col-10">
-        <div class="row justify-content-center align-items-center" style="height: 75%;">
-            <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                <div class="d-grid gap-2" v-for="(phrase, index) in phrases" :key="index">
-                    <button @click.prevent="" type="button" class="btn btn-primary btn-lg btn-custom mb-5 h-75" style="font-size: 24; font-family: 'Lato', sans-serif; font-weight: 700 !important;">{{ phrase.phrase }}</button>
-                </div>
-            </div>
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand">
+          <img src="imgs/icon.png" width="36px" height="36px" alt="">
+          <span class="page_msg" style="font-size: 16;">Welcome, {{ uname_ }}</span>
+        </a>
+        <span class="navbar_msg">Choose phrase</span>
+        <div class="ms-auto navbar-brand">
+          <button class="btn btn-light text-dark" style="margin-right: 5px !important" @click.prevent="toMenu()">Back to menu</button>
         </div>
-      </div>
-    </main>
+      </nav>
+      <main class="main-cont h-100">
+        <div class="col-xxl-6 col-xl-8 col-lg-10 col-md-8 col-sm-10 col-10">
+          <div v-if="!learningPhrase" class="row justify-content-center align-items-center" style="height: 75%;">
+            <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+              <div class="d-grid gap-2" v-for="(phrase, index) in phrases" :key="index">
+                <button @click.prevent="selectPhrase(phrase)" type="button" class="btn btn-primary btn-lg btn-custom mb-5 h-75" style="font-size: 24; font-family: 'Lato', sans-serif; font-weight: 700 !important;">{{ phrase.phrase }}</button>
+              </div>
+            </div>
+          </div>
+          <!-- Display the selected phrase details -->
+          <div v-if="learningPhrase" class="phrase_msg">
+            <span class="phrase_msg" style="font-size: 36; font-weight: 800 !important;">{{ learningPhrase.phrase }}</span>
+            <span class="phrase_msg" style="font-size: 32; color:#000000; opacity: 45%; font-weight: 700 !important;"><strong>Znaczenie:</strong> {{ learningPhrase.meaning }}</span>
+            <div class="row mb-4"></div>
+            <span class="phrase_msg" style="font-size: 24; font-weight: 800 !important;"><strong>Example:</strong> {{ learningPhrase.example }}</span>
+            <span class="phrase_msg" style="font-size: 20; color:#000000; opacity: 45%; font-weight: 700 !important;"><strong>Przykład:</strong> {{ learningPhrase.example_pl }}</span>
+            <div class="row mb-4"></div>
+            <span class="phrase_msg" style="font-size: 24; font-weight: 800 !important;"><strong>Explanation:</strong> {{ learningPhrase.explanation }}</span>
+            <span class="phrase_msg" style="font-size: 20; color:#000000; opacity: 45%; font-weight: 700 !important;"><strong>Wyjaśnienie:</strong> {{ learningPhrase.explanation_pl }}</span>
+            <div class="row justify-content-center align-items-center" style="height: 50%;">
+              <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                  <div class="d-grid gap-2">
+                      <button type="button" class="btn btn-primary btn-lg btn-custom mb-5 w-50 mx-auto" style="font-size: 24;" @click="unselectPhrase">Return</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   </body>
 </html>

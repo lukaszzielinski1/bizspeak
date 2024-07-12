@@ -44,11 +44,11 @@
 
                 <!-- game started -->
                 <div v-if="gameStarted">
-                    <div style="height:170px">
-                        <span class="page_msg" style="font-size: 44; font-weight: 800 !important;">{{ currentMeaning.meaning }}</span>
+                    <div style="height:200px">
+                        <span class="page_msg" style="font-size: 44; font-weight: 800 !important; padding:0px">{{ currentMeaning.meaning }}</span>
                         <div v-if="showNextButton" class="page_msg">
-                            <span class="page_msg" style="font-size: 16; font-weight: 700 !important;">{{ example }}</span>
-                            <span class="page_msg" style="font-size: 16; color:#000000; opacity: 45%; font-weight: 700 !important;">{{ example_pl }}</span>
+                            <span class="page_msg" style="font-size: 16; font-weight: 700 !important;">{{ example_pl }}</span>
+                            <span class="page_msg" style="font-size: 16; color:#000000; opacity: 45%; font-weight: 700 !important;">{{ example }}</span>
                         </div>
                     </div>
                     

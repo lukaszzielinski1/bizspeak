@@ -29,6 +29,7 @@ const appInstance = createApp({
             meanings: [],
             currentPhrase: {},
             currentMeaning: {},
+            learningPhrase: null,
             options: [],
             currentPhraseIndex: 0,
             totalPhrases: 0,
@@ -350,6 +351,13 @@ const appInstance = createApp({
                     this.highScore2 = userDoc.data().highScore2;
                 }
             }
+        },
+        //learning
+        selectPhrase(phrase) {
+            this.learningPhrase = phrase;
+        },
+        unselectPhrase() {
+            this.learningPhrase = null;
         },
     },
 
